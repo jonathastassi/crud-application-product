@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
+import { Department } from '../models/department';
 
 @Injectable({
   providedIn: 'root'
@@ -51,8 +52,47 @@ export class ProductService {
     return this.productSubject$.asObservable();
   }
 
-  // post(product: Product): Observable<Product> {
-  //   return this.http.post(this.urlApi, product)
-  //     .
-  // }
+  post(product: Product): Observable<Product> {
+    let departments = (product.departments as Department[]).map(d => d.id);
+    return this.http.post<Product>(this.urlApi, {...product, departments})
+      .pipe(
+        tap(
+          p => {
+            this.productSubject$.getValue()
+              .push({...product, id: p.id})
+          }
+        )
+      ); 
+  }
+
+  delete(product: Product): Observable<any> {
+    return this.http.delete(`${this.urlApi}/${product.id}`)
+      .pipe(
+        tap(
+          () => {
+            let products = this.productSubject$.getValue();
+            let i = products.findIndex(p => p.id == product.id);
+            if (i >= 0) {
+              products.splice(i, 1);
+            }
+          }
+        )
+      );
+  }
+
+  update(product: Product): Observable<Product> {
+    let departments = (product.departments as Department[]).map(d => d.id);
+    return this.http.put<Product>(`${this.urlApi}/${product.id}`, {...product, departments})
+      .pipe(
+        tap(
+          (pro) => {
+            const products = this.productSubject$.getValue();
+            const i = products.findIndex(p => p.id === pro.id);
+            if (i >= 0) {
+              products[i].name = pro.name;
+            }
+          }
+        )
+      )
+  }
 }

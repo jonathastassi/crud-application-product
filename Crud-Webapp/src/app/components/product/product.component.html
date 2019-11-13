@@ -1,3 +1,38 @@
-<p>
-  product works!
-</p>
+<mat-card fxFlex>
+  <mat-card-title>
+    Product Form
+  </mat-card-title>
+
+  <mat-card-content>
+    <form [formGroup]="productForm" (ngSubmit)="save()" fxLayout="column" fxLayoutAlign="space-between">
+      <input type="hidden" formControlName="id">
+
+      <mat-form-field>
+        <input matInput placeholder="Name" formControlName="name">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Stock" formControlName="stock" type="number">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Price" formControlName="price" type="number">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Departments" formControlName="departments" multiple>
+          <mat-select-trigger>
+            {{productForm.value.departments.length > 0 ? productForm.value.departments[0].name : ''}}
+            <span *ngIf="productForm.value.departments?.length > 1" class="example-additional-selection">
+              (+{{productForm.value.departments.length - 1}} {{productForm.value.departments.length === 2 ? 'other' : 'others'}})
+            </span>
+          </mat-select-trigger>
+          <mat-option *ngFor="let deparment of departments" [value]="deparment">{{deparment.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div fxLayout="row" fxLayoutAlign="end end">
+        <button mat-button color="primary" fxFlex="10" type="submit">Save</button>
+        <button mat-button color="warn" fxFlex="10" type="reset">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
