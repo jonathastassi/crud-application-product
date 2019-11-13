@@ -84,6 +84,11 @@ namespace Crud.Webapi.Controllers
                     return BadRequest("ID não informado!");
                 }
 
+                if (this.context.Products.Find(prod => prod.Departments.Contains(id)).FirstOrDefault() != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Não foi possível deletar o departamento!", Error = "Departamento sendo usado no cadastro de produto!" });
+                }
+
                 this.context.Departments.DeleteOne(dep => dep.Id == id);
                 return NoContent();
             }
