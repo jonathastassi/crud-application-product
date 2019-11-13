@@ -1,6 +1,6 @@
 import { DepartmentService } from './../../services/department.service';
 import { Department } from './../../models/department';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.css']
 })
-export class DepartmentComponent implements OnInit {
+export class DepartmentComponent implements OnInit, OnDestroy {
 
   deparmentName: string;
   departments: Department[];
@@ -51,26 +51,25 @@ export class DepartmentComponent implements OnInit {
         .subscribe(
           (data) => {
             console.log(data);
-            this.notify("Updated!");
+            this.notify('Updated!');
             this.clearFields();
           },
           (error) => {
             console.error(error);
-            this.notify("Error!");
+            this.notify('Error!');
           }
         );
-    }
-    else {
+    } else {
       this.service.post({ name: this.deparmentName })
         .subscribe(
           (data) => {
             console.log(data);
-            this.notify("Inserted!");
+            this.notify('Inserted!');
             this.clearFields();
           },
           (error) => {
             console.error(error);
-            this.notify("Error!");
+            this.notify('Error!');
           }
         );
     }
