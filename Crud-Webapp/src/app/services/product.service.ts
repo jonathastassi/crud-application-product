@@ -3,7 +3,7 @@ import { Product } from './../models/product';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, filter } from 'rxjs/operators';
 import { Department } from '../models/department';
 
 @Injectable({
@@ -28,22 +28,16 @@ export class ProductService {
         this.departmentService.get()
       )
         .pipe(
-          tap(
-            ([products, departments]) => console.log("123",products, departments)
-          ),
+          filter(([products, departments]) => products != null && departments != null),
           map(
             ([products, departments]) => {
               for (let p of products) {
                 let ids = (p.departments as string[]);
                 p.departments = ids ? ids.map((id) => departments.find(dep => dep.id == id)) : null;
               }
-
               return products;
             }
-          ),
-          tap(
-            (products) => console.log(products)
-          ),
+          )
         )
         .subscribe(this.productSubject$);
       this.loaded = true;
