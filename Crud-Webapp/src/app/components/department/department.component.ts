@@ -93,7 +93,10 @@ export class DepartmentComponent implements OnInit, OnDestroy {
     this.service.delete(department)
       .subscribe(
         () => this.notify('Removed'),
-        (err) => console.log(err)
+        (err) => {
+          console.log(err)
+          this.notify(err.error.error)
+        }
       );
   }
 
